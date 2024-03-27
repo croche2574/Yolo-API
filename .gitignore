@@ -1,0 +1,9 @@
+# Certs
+.crt
+.key
+
+# Logs
+logs
+*.log
+
+*.pt
