@@ -7,3 +7,5 @@ logs
 *.log
 
 *.pt
+certificates/certificate.crt
+certificates/private.key
