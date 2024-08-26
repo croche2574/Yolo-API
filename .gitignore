@@ -1,11 +1,11 @@
 # Certs
-.crt
-.key
+#.crt
+#.key
 
 # Logs
 logs
 *.log
 
 *.pt
-certificates/certificate.crt
-certificates/private.key
+#certificates/certificate.crt
+#certificates/private.key

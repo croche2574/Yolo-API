@@ -4,11 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from ultralytics import YOLO
 from PIL import Image, ImageOps
 from asyncio import Queue, QueueFull, create_task
-import uvicorn, json, os
+import uvicorn, json, os, time
 from config.definitions import ROOT_DIR
 
 model = YOLO('./models/mosaicXL-detect.pt')
-# model_seg = YOLO('yolov8m-seg.pt')
 keyfile = os.path.join(ROOT_DIR, 'certificates', 'private.key')
 certfile = os.path.join(ROOT_DIR, 'certificates', 'certificate.crt')
 
@@ -78,15 +77,16 @@ class Detector:
             except:
                 continue
             img = ImageOps.flip(img)
-            #img.save("./file.png")
+            # Save a copy of the frame for debug purposes
+            # img.save("./saved-images/file-" + time.strftime("%Y%m%d-%H%M%S") + ".png")
                 
-            results = model.track(img, persist=True, classes=self.searchClasses)
+            results = model.track(img, persist=True, classes=self.searchClasses, show=False)
 
             for r in results:
                 namedict = r.names
                 result_list = []
                 for idx, x in enumerate(r.boxes.data):
-                    print(r.boxes.xywhn)
+                    #print(r.boxes.xywhn)
                     try:
                         result = {
                             'id': int(r.boxes.id[idx].item()),
@@ -103,20 +103,7 @@ class Detector:
                     except:
                         print("empty")
                 result_json = json.dumps(result_list)
-                # print(result_json)
                 await self.socket.send_json(result_json)
-
-
-    async def play_frames(self):
-        bytes = await self.queue.get()
-        # print(bytes)
-        try:
-            img = Image.frombytes('RGBA', (self.width,self.height), bytes, 'raw')
-            img = ImageOps.flip(img)
-            img.save("./file.png")
-            print("saved")
-        except Exception as error:
-            print(error)
 
 @app.websocket("/detect")
 async def detect(websocket: WebSocket):
@@ -130,8 +117,6 @@ async def detect(websocket: WebSocket):
     
     await start
     await predict
- 
-    # await play_frames()
 
 @app.get("/")
 async def get_home(request: Request):
