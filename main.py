@@ -108,7 +108,7 @@ class Detector:
 @app.websocket("/detect")
 async def detect(websocket: WebSocket):
     await websocket.accept()
-    logger.debug("connected")
+    print("connected")
 
     
     detector = Detector(websocket)
@@ -123,5 +123,5 @@ async def get_home(request: Request):
     return {"message": "Hello World"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="localhost", port=8000, log_level="debug", reload=True, 
+    uvicorn.run("main:app", host="localhost", port=8080, log_level="debug", reload=True, 
                 ssl_keyfile=keyfile, ssl_certfile=certfile, ws="websockets", ws_ping_interval=None)

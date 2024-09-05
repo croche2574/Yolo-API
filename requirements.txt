@@ -2,3 +2,9 @@ fastapi==0.110.0
 Pillow==10.2.0
 ultralytics==8.0.114
 uvicorn==0.29.0
+websockets
+lapx
+-i https://download.pytorch.org/whl/cu118
+torch
+torchvision
+torchaudio
